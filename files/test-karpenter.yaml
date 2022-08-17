@@ -1,0 +1,32 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: test-karpenter
+spec:
+  ttlSecondsUntilExpired: 900
+  ttlSecondsAfterEmpty: 30
+  requirements:
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values: ["m5.large"]
+    - key: "topology.kubernetes.io/zone"
+      operator: In
+      values: ["ap-northeast-1a", "ap-northeast-1c"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["on-demand"]
+  limits:
+    resources:
+      cpu: "1000"
+      memory: 1000Gi
+  provider:
+    tags:
+      karpenter.sh/discovery: karpenter-test
+    subnetSelector:
+      karpenter.sh/discovery: karpenter-test
+    securityGroupSelector:
+      karpenter.sh/discovery: karpenter-test
+    instanceProfile: KarpenterNodeInstanceProfile-karpenter-test
